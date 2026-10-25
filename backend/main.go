@@ -67,20 +67,23 @@ func projectsHandler(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, projects)
 }
 
+func newMux() *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /health", healthHandler)
+	mux.HandleFunc("GET /api/profile", profileHandler)
+	mux.HandleFunc("GET /api/projects", projectsHandler)
+	return mux
+}
+
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("GET /health", healthHandler)
-	mux.HandleFunc("GET /api/profile", profileHandler)
-	mux.HandleFunc("GET /api/projects", projectsHandler)
-
 	srv := &http.Server{
 		Addr:              ":" + port,
-		Handler:           mux,
+		Handler:           newMux(),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
