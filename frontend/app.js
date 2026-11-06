@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8081";
+const API_BASE = "https://personal-profile-backend-bsmo.onrender.com";
 
 async function loadProfile() {
   const res = await fetch(`${API_BASE}/api/profile`);
