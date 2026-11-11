@@ -1,38 +1,51 @@
-import { fetchProfile, fetchProjects } from "./api";
-import { fallbackProfile, fallbackProjects } from "./fallback";
-import { useApiData } from "./hooks/useApiData";
 import { useSeason } from "./hooks/useSeason";
 import { useParticles } from "./hooks/useParticles";
-import { Hero } from "./components/Hero";
-import { About } from "./components/About";
 import { Skills } from "./components/Skills";
-import { Projects } from "./components/Projects";
-import { Footer } from "./components/Footer";
+import { Links } from "./components/Links";
 import { SeasonSwitcher } from "./components/SeasonSwitcher";
 import { Particles } from "./components/Particles";
+import {
+  intro,
+  skills,
+  linksTitle,
+  socialLinks,
+  imageCredit,
+} from "./content";
+import chessImage from "./assets/chess.jpeg";
 
 function App() {
-  const { data: profile, source } = useApiData(fetchProfile, fallbackProfile);
-  const { data: projects } = useApiData(fetchProjects, fallbackProjects);
   const { season, setSeason } = useSeason();
   const { running, toggle } = useParticles();
 
   return (
     <>
       <Particles season={season} running={running} />
-      <SeasonSwitcher
-        season={season}
-        onChange={setSeason}
-        particlesOn={running}
-        onToggleParticles={toggle}
-      />
-      <Hero name={profile.name} title={profile.title} links={profile.links} />
-      <main>
-        <About text={profile.about} />
-        <Skills skills={profile.skills} />
-        <Projects projects={projects} />
-      </main>
-      <Footer source={source} />
+      <div className="page">
+        <main className="content">
+          <div>
+            <h1>{intro.greeting}</h1>
+            <p className="subtitle">{intro.role}</p>
+          </div>
+          <Skills skills={skills} />
+          <Links title={linksTitle} links={socialLinks} />
+          <SeasonSwitcher
+            season={season}
+            onChange={setSeason}
+            particlesOn={running}
+            onToggleParticles={toggle}
+          />
+        </main>
+        <aside className="visual">
+          <figure className="frame">
+            <img src={chessImage} alt="Chess illustration" />
+            <figcaption>
+              <a href={imageCredit.url} target="_blank" rel="noopener noreferrer">
+                {imageCredit.text}
+              </a>
+            </figcaption>
+          </figure>
+        </aside>
+      </div>
     </>
   );
 }

@@ -2,11 +2,18 @@ export type Season = "spring" | "summer" | "autumn" | "winter";
 
 export const SEASONS: Season[] = ["spring", "summer", "autumn", "winter"];
 
-export const SEASON_LABELS: Record<Season, string> = {
-  spring: "🌸 Spring",
-  summer: "☀️  Summer",
-  autumn: "🍂 Autumn",
-  winter: "❄️  Winter",
+export const SEASON_ICONS: Record<Season, string> = {
+  spring: "🌸",
+  summer: "☀️",
+  autumn: "🍂",
+  winter: "❄️",
+};
+
+export const SEASON_NAMES: Record<Season, string> = {
+  spring: "Spring",
+  summer: "Summer",
+  autumn: "Autumn",
+  winter: "Winter",
 };
 
 export function getSeason(date: Date = new Date()): Season {
@@ -15,4 +22,4 @@ export function getSeason(date: Date = new Date()): Season {
   if (month >= 5 && month <= 7) return "summer";
   if (month >= 8 && month <= 10) return "autumn";
   return "winter";
-}  
+}
