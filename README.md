@@ -14,7 +14,7 @@ flowchart LR
     Dev["Developer"] -->|git push| Repo["GitHub repository"]
     Repo --> CI["GitHub Actions CI: gofmt, vet, test, docker build"]
     CI -->|push image| GHCR["GHCR image registry"]
-    Repo -->|frontend changes| Pages["GitHub Pages: static frontend"]
+    Repo -->|frontend changes: build and deploy| Pages["GitHub Pages: React build"]
     GHCR -->|pull image| Render["Render: Go API container"]
     Visitor["Visitor browser"] --> Pages
     Visitor -->|fetch /api/*| Render
@@ -26,7 +26,7 @@ flowchart LR
 | Layer | Tools |
 |---|---|
 | Backend | Go (standard library only) |
-| Frontend | HTML, CSS, JavaScript |
+| Frontend | React, TypeScript, Vite (seasonal theme, canvas particles) |
 | Container | Docker, multi-stage build, non-root user |
 | CI/CD | GitHub Actions |
 | Registry | GitHub Container Registry (GHCR) |
