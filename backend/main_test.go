@@ -4,14 +4,20 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
-func TestHealth(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/health", nil)
+func doGet(t *testing.T, path string) *httptest.ResponseRecorder {
+	t.Helper()
+	req := httptest.NewRequest(http.MethodGet, path, nil)
 	rec := httptest.NewRecorder()
-
 	newMux().ServeHTTP(rec, req)
+	return rec
+}
+
+func TestHealth(t *testing.T) {
+	rec := doGet(t, "/health")
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("expected status 200, got %d", rec.Code)
@@ -27,10 +33,7 @@ func TestHealth(t *testing.T) {
 }
 
 func TestProfile(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/api/profile", nil)
-	rec := httptest.NewRecorder()
-
-	newMux().ServeHTTP(rec, req)
+	rec := doGet(t, "/api/profile")
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("expected status 200, got %d", rec.Code)
@@ -40,30 +43,37 @@ func TestProfile(t *testing.T) {
 	if err := json.NewDecoder(rec.Body).Decode(&p); err != nil {
 		t.Fatalf("invalid JSON: %v", err)
 	}
-	if p.Name == "" {
-		t.Error("profile name should not be empty")
+	if p.Greeting == "" || p.Role == "" {
+		t.Error("greeting and role should not be empty")
 	}
 	if len(p.Skills) == 0 {
 		t.Error("profile should have at least one skill")
 	}
+	if len(p.Links) == 0 {
+		t.Error("profile should have at least one link")
+	}
 }
 
-func TestProjects(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/api/projects", nil)
-	rec := httptest.NewRecorder()
-
-	newMux().ServeHTTP(rec, req)
-
-	if rec.Code != http.StatusOK {
-		t.Fatalf("expected status 200, got %d", rec.Code)
+func TestProfileDataIsValid(t *testing.T) {
+	p, err := loadProfile()
+	if err != nil {
+		t.Fatalf("load profile: %v", err)
 	}
-
-	var list []Project
-	if err := json.NewDecoder(rec.Body).Decode(&list); err != nil {
-		t.Fatalf("invalid JSON: %v", err)
+	for _, l := range p.Links {
+		if l.Label == "" || l.Icon == "" {
+			t.Errorf("link %+v needs a label and an icon", l)
+		}
+		if !strings.HasPrefix(l.URL, "https://") {
+			t.Errorf("link %q must use https, got %q", l.Label, l.URL)
+		}
 	}
-	if len(list) == 0 {
-		t.Error("projects list should not be empty")
+}
+
+func TestProjectsRouteRemoved(t *testing.T) {
+	rec := doGet(t, "/api/projects")
+
+	if rec.Code != http.StatusNotFound {
+		t.Errorf("expected 404, got %d", rec.Code)
 	}
 }
 

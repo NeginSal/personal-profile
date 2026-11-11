@@ -1,51 +1,59 @@
 package main
 
 import (
+	"embed"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"time"
 )
 
+//go:embed data/profile.json
+var dataFS embed.FS
+
 type Link struct {
 	Label string `json:"label"`
 	URL   string `json:"url"`
+	Icon  string `json:"icon"`
+}
+
+type ImageCredit struct {
+	Text string `json:"text"`
+	URL  string `json:"url"`
 }
 
 type Profile struct {
-	Name   string   `json:"name"`
-	Title  string   `json:"title"`
-	About  string   `json:"about"`
-	Skills []string `json:"skills"`
-	Links  []Link   `json:"links"`
+	Greeting    string      `json:"greeting"`
+	Role        string      `json:"role"`
+	Skills      []string    `json:"skills"`
+	LinksTitle  string      `json:"linksTitle"`
+	Links       []Link      `json:"links"`
+	ImageCredit ImageCredit `json:"imageCredit"`
 }
 
-type Project struct {
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Tags        []string `json:"tags"`
-	URL         string   `json:"url"`
+func loadProfile() (Profile, error) {
+	var p Profile
+	raw, err := dataFS.ReadFile("data/profile.json")
+	if err != nil {
+		return p, fmt.Errorf("read profile: %w", err)
+	}
+	if err := json.Unmarshal(raw, &p); err != nil {
+		return p, fmt.Errorf("parse profile: %w", err)
+	}
+	return p, nil
 }
 
-var profile = Profile{
-	Name:   "Negin Saljooghi",
-	Title:  "DevOps Engineer",
-	About:  "I build and automate things. This site is my DevOps playground.",
-	Skills: []string{"Linux", "kubernetes", "Docker", "Go", "GitHub Actions", "Git"},
-	Links: []Link{
-		{Label: "GitHub", URL: "https://github.com/NeginSal"},
-	},
+func mustLoadProfile() Profile {
+	p, err := loadProfile()
+	if err != nil {
+		panic(err)
+	}
+	return p
 }
 
-var projects = []Project{
-	{
-		Name:        "Personal Profile",
-		Description: "This website: Go backend, CI/CD pipeline, containerized.",
-		Tags:        []string{"Go", "Docker", "GitHub Actions"},
-		URL:         "https://github.com/NeginSal/personal-profile",
-	},
-}
+var profile = mustLoadProfile()
 
 func writeJSON(w http.ResponseWriter, status int, data any) {
 	w.Header().Set("Content-Type", "application/json")
@@ -63,10 +71,6 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, profile)
 }
 
-func projectsHandler(w http.ResponseWriter, r *http.Request) {
-	writeJSON(w, http.StatusOK, projects)
-}
-
 func withCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -78,7 +82,6 @@ func newMux() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", healthHandler)
 	mux.HandleFunc("GET /api/profile", profileHandler)
-	mux.HandleFunc("GET /api/projects", projectsHandler)
 	return mux
 }
 
