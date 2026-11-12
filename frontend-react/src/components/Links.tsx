@@ -1,8 +1,10 @@
-import type { SocialLink } from "../content";
+import type { IconType } from "react-icons";
+import type { Link } from "../types";
+import { ICONS } from "../icons";
 
 interface LinksProps {
   title: string;
-  links: SocialLink[];
+  links: Link[];
 }
 
 export function Links({ title, links }: LinksProps) {
@@ -11,11 +13,11 @@ export function Links({ title, links }: LinksProps) {
       <h2>{title}</h2>
       <ul className="links-list">
         {links.map((link) => {
-          const Icon = link.icon;
+          const Icon: IconType | undefined = ICONS[link.icon];
           return (
             <li key={link.url}>
               <a href={link.url} target="_blank" rel="noopener noreferrer">
-                <Icon aria-hidden="true" />
+                {Icon && <Icon aria-hidden="true" />}
                 {link.label}
               </a>
             </li>

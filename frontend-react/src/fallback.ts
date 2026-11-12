@@ -1,18 +1,43 @@
-import type { Profile, Project } from "./types";
+import type { Profile } from "./types";
 
 export const fallbackProfile: Profile = {
-  name: "Negin Saljooghi",
-  title: "DevOps Engineer",
-  about: "I build and automate things. This site is my DevOps playground.",
-  skills: ["Linux", "Kubernetes", "Docker", "Go", "GitHub Actions", "Git"],
-  links: [{ label: "GitHub", url: "https://github.com/NeginSal" }],
-};
-
-export const fallbackProjects: Project[] = [
-  {
-    name: "Personal Profile",
-    description: "This website: Go backend, CI/CD pipeline, containerized.",
-    tags: ["Go", "Docker", "GitHub Actions"],
-    url: "https://github.com/NeginSal/personal-profile",
+  greeting: "Hi, my name is Negin,",
+  role: "I'm a DevOps engineer & professional chess player",
+  skills: [
+    "Linux",
+    "Kubernetes",
+    "Docker",
+    "Go",
+    "GitHub Actions",
+    "Git",
+    "React",
+    "Vue",
+    "JavaScript",
+    "Tailwind",
+    "Bootstrap",
+  ],
+  linksTitle: "Your move, find me here ♟",
+  links: [
+    {
+      label: "LinkedIn",
+      url: "https://www.linkedin.com/in/negin-saljooghi-06835b174/",
+      icon: "linkedin",
+    },
+    { label: "GitHub", url: "https://github.com/NeginSal", icon: "github" },
+    { label: "DEV", url: "https://dev.to/negin", icon: "dev" },
+    {
+      label: "Lichess",
+      url: "https://lichess.org/@/Negin007",
+      icon: "lichess",
+    },
+    {
+      label: "Duolingo",
+      url: "https://www.duolingo.com/profile/Negin007",
+      icon: "duolingo",
+    },
+  ],
+  imageCredit: {
+    text: "Image via Magnific",
+    url: "https://www.magnific.com/free-photos-vectors/anime-girl-playing-chess",
   },
-];
+};

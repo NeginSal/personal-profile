@@ -1,19 +1,19 @@
 export interface Link {
   label: string;
   url: string;
+  icon: string;
+}
+
+export interface ImageCredit {
+  text: string;
+  url: string;
 }
 
 export interface Profile {
-  name: string;
-  title: string;
-  about: string;
+  greeting: string;
+  role: string;
   skills: string[];
+  linksTitle: string;
   links: Link[];
-}
-
-export interface Project {
-  name: string;
-  description: string;
-  tags: string[];
-  url: string;
+  imageCredit: ImageCredit;
 }
